@@ -25,3 +25,6 @@ Thumbs.db
 # Editores
 .vscode/
 .idea/
+
+# Artefactos generados
+*.zip
