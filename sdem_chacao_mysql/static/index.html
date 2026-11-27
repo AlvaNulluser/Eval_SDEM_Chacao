@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDEM Chacao | Detección de Enlaces Maliciosos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors">
+
+    <!-- LOGIN -->
+    <div id="login-screen" class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-200 dark:border-slate-700">
+            <div class="text-center mb-6">
+                <div class="text-4xl mb-2">🛡️</div>
+                <h1 class="text-2xl font-bold">SDEM · Chacao</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Sistema de Detección de Enlaces Maliciosos</p>
+                <p class="text-xs text-slate-400 mt-1">Empresas de importación y exportación · Chacao</p>
+            </div>
+            <div id="login-error" role="alert" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4 text-sm"></div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium mb-1">Usuario</label>
+                    <input type="text" id="username" name="username" autocomplete="username" value="admin" required class="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium mb-1">Contraseña</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" placeholder="••••••••" required class="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg">Iniciar sesión</button>
+            </form>
+            <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500">
+                <p class="font-semibold mb-1">Cuentas de prueba:</p>
+                <p>admin / Admin#2026 · analista / Analista#2026</p>
+                <p>auditor / Auditor#2026 · empleado / Empleado#2026</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div id="app-screen" class="hidden">
+        <nav class="bg-white dark:bg-slate-800 shadow px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 font-bold text-lg">
+                <span>🛡️</span> <span>SDEM Chacao</span>
+                <span id="user-badge" class="ml-3 text-xs bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full"></span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="document.documentElement.classList.toggle('dark')" class="text-xl" title="Tema">🌓</button>
+                <button onclick="logout()" class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg">Salir</button>
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto p-6 space-y-8">
+            <!-- DASHBOARD -->
+            <section id="sec-dashboard" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow border-l-4 border-blue-500">
+                    <div id="stat-total" class="text-3xl font-bold">0</div>
+                    <div class="text-sm text-slate-500">Enlaces analizados</div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow border-l-4 border-emerald-500">
+                    <div id="stat-seguros" class="text-3xl font-bold text-emerald-600">0</div>
+                    <div class="text-sm text-slate-500">Seguros</div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow border-l-4 border-amber-500">
+                    <div id="stat-sospechosos" class="text-3xl font-bold text-amber-500">0</div>
+                    <div class="text-sm text-slate-500">Sospechosos</div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow border-l-4 border-red-500">
+                    <div id="stat-maliciosos" class="text-3xl font-bold text-red-600">0</div>
+                    <div class="text-sm text-slate-500">Maliciosos</div>
+                </div>
+            </section>
+
+            <!-- ANALIZADORES -->
+            <div id="sec-analyzers" class="grid md:grid-cols-2 gap-6">
+                <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow space-y-4">
+                    <h2 class="text-lg font-bold">🔍 Analizador de enlace individual</h2>
+                    <input type="text" id="url-input" aria-label="URL a verificar" placeholder="https://ejemplo.com" class="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                    <div class="flex gap-2">
+                        <button onclick="analyzeUrl()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Analizar enlace</button>
+                        <button onclick="loadSampleUrl()" class="bg-slate-200 dark:bg-slate-700 px-3 py-2 rounded-lg text-sm">Ejemplo malicioso</button>
+                    </div>
+                    <div id="url-result" aria-live="polite" class="hidden p-4 rounded-lg border text-sm"></div>
+                </section>
+
+                <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow space-y-4">
+                    <h2 class="text-lg font-bold">✉️ Análisis de correo completo</h2>
+                    <textarea id="email-input" aria-label="Contenido del correo" rows="3" placeholder="Pegue el contenido del correo..." class="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600"></textarea>
+                    <div class="flex gap-2">
+                        <button onclick="analyzeEmail()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Extraer y analizar</button>
+                        <button onclick="loadSampleEmail()" class="bg-slate-200 dark:bg-slate-700 px-3 py-2 rounded-lg text-sm">Correo de ejemplo</button>
+                    </div>
+                    <div id="email-result" aria-live="polite" class="space-y-2 text-sm"></div>
+                </section>
+            </div>
+
+            <!-- ÚLTIMOS ANÁLISIS -->
+            <section id="sec-recent" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-4">📊 Últimos análisis</h2>
+                <div id="recent-list" class="space-y-2 text-sm text-slate-500">Sin análisis registrados aún.</div>
+            </section>
+
+            <!-- MAPA INTERACTIVO CHACAO -->
+            <section id="sec-map" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow space-y-4">
+                <h2 class="text-lg font-bold">📍 Mapa de empresas · Municipio Chacao</h2>
+                <div id="map" class="h-72 w-full rounded-xl z-0 border dark:border-slate-700"></div>
+                <div id="form-company" class="grid md:grid-cols-4 gap-3 pt-2">
+                    <input type="text" id="comp-name" aria-label="Nombre de la empresa" placeholder="Nombre de la empresa" class="px-3 py-2 border rounded-lg dark:bg-slate-700">
+                    <input type="number" step="any" id="comp-lat" aria-label="Latitud" value="10.4967" class="px-3 py-2 border rounded-lg dark:bg-slate-700">
+                    <input type="number" step="any" id="comp-lon" aria-label="Longitud" value="-66.8537" class="px-3 py-2 border rounded-lg dark:bg-slate-700">
+                    <button onclick="registerCompany()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Registrar ubicación</button>
+                </div>
+            </section>
+
+            <!-- USUARIOS (Solo Admin) -->
+            <section id="sec-users" class="hidden bg-white dark:bg-slate-800 p-6 rounded-xl shadow space-y-4">
+                <h2 class="text-lg font-bold">👥 Gestión de usuarios y roles</h2>
+                <div class="grid md:grid-cols-4 gap-3">
+                    <input type="text" id="new-user" aria-label="Usuario nuevo" placeholder="Usuario" class="px-3 py-2 border rounded-lg dark:bg-slate-700">
+                    <input type="password" id="new-pass" aria-label="Contraseña del usuario nuevo" placeholder="Contraseña" class="px-3 py-2 border rounded-lg dark:bg-slate-700">
+                    <select id="new-role" aria-label="Rol del usuario nuevo" class="px-3 py-2 border rounded-lg dark:bg-slate-700">
+                        <option value="Empleado">Empleado (Nivel 1)</option>
+                        <option value="Auditor">Auditor (Nivel 2)</option>
+                        <option value="Analista de seguridad">Analista de seguridad (Nivel 3)</option>
+                        <option value="Administrador">Administrador (Nivel 4)</option>
+                    </select>
+                    <button onclick="createUser()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Crear usuario</button>
+                </div>
+            </section>
+
+            <!-- AUDITORÍA -->
+            <section id="sec-audit" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold">📜 Bitácora de auditoría</h2>
+                    <button onclick="exportCSV()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-sm">Exportar CSV</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="border-b dark:border-slate-700 text-slate-500">
+                            <tr><th class="py-2">Fecha/Hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr>
+                        </thead>
+                        <tbody id="audit-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

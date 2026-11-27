@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SDEM Chacao | Detección de Enlaces Maliciosos</title>
+<meta name="description" content="SDEM Chacao: sistema de detección de enlaces maliciosos para empresas de importación y exportación. Análisis heurístico local de URL y correos.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0b1d3a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<section id="login">
+ <div class="lbox">
+  <div class="logo">🛡️</div>
+  <h1>SDEM · Chacao</h1>
+  <div class="sub">Sistema de Detección de Enlaces Maliciosos<br>Correo institucional · Empresas de importación y exportación</div>
+  <form id="loginform" novalidate>
+   <label for="u">Usuario</label><input id="u" name="username" autocomplete="username">
+   <label for="p">Contraseña</label><input id="p" name="password" type="password" autocomplete="current-password">
+   <button type="submit" class="full" id="bl">Iniciar sesión</button>
+  </form>
+  <div class="err" id="le"></div>
+  <div class="demo"><b>Cuentas de prueba:</b><br>admin / Admin#2026 · analista / Analista#2026<br>auditor / Auditor#2026 · empleado / Empleado#2026<br>jperez / Perez#2026 · mgomez / Gomez#2026<br>Bloqueo tras 3 intentos fallidos.</div>
+ </div>
+</section>
+
+<div id="app" class="hidden">
+ <header><span class="ico">🛡️</span><b>SDEM Chacao</b><span class="sp"></span><span id="who"></span><span class="badge" id="rol"></span><button type="button" class="sec btn-ghost" id="th">🌓</button><button type="button" class="red" id="bo">Salir</button></header>
+ <nav id="nav"></nav>
+ <main>
+
+  <section id="v-dash">
+   <div class="grid">
+    <div class="card"><div class="kpi" id="k0">0<small>Enlaces analizados</small></div></div>
+    <div class="card"><div class="kpi k-ok" id="k1">0<small>Seguros</small></div></div>
+    <div class="card"><div class="kpi k-wa" id="k2">0<small>Sospechosos</small></div></div>
+    <div class="card"><div class="kpi k-bad" id="k3">0<small>Maliciosos</small></div></div>
+   </div>
+   <div class="card"><h2>Distribución de resultados</h2><div id="chart"></div></div>
+   <div class="card"><h2>Últimos análisis</h2><div class="tw"><table id="tbh"></table></div></div>
+  </section>
+
+  <section id="v-scan" class="hidden">
+   <div class="card"><h2>🔍 Analizador de enlace individual</h2>
+    <label for="url">URL a verificar</label><input id="url" placeholder="https://ejemplo.com/ruta">
+    <div class="row mt"><button type="button" id="bs">Analizar enlace</button><button type="button" class="sec" id="bx">Cargar ejemplo malicioso</button></div>
+    <div id="res"></div>
+   </div>
+   <div class="card"><h3>Criterios heurísticos aplicados</h3><p class="note">Protocolo no seguro · IP en lugar de dominio · símbolo @ · punycode · subdominios excesivos · TLD riesgoso · acortadores · palabras de phishing · suplantación de marcas (SENIAT, DHL, Maersk, bancos) · codificación hexadecimal · puertos atípicos · longitud anómala.</p></div>
+  </section>
+
+  <section id="v-mail" class="hidden">
+   <div class="card"><h2>✉️ Análisis de correo completo</h2>
+    <label for="mt">Pegue el contenido del correo</label><textarea id="mt" placeholder="Pegue aquí el cuerpo del mensaje..."></textarea>
+    <div class="row mt"><button type="button" id="bm">Extraer y analizar enlaces</button><button type="button" class="sec" id="bme">Cargar correo de ejemplo</button></div>
+    <div id="mres"></div>
+   </div>
+  </section>
+
+  <section id="v-map" class="hidden">
+   <div class="card"><h2>📍 Ubicación por coordenadas · Municipio Chacao</h2>
+    <div class="row"><div><label for="ms">Empresa registrada</label><select id="ms"></select></div>
+     <div><label for="la">Latitud</label><input id="la" value="10.4967"></div>
+     <div><label for="lo">Longitud</label><input id="lo" value="-66.8537"></div></div>
+    <div class="row mt"><button type="button" id="mg">Ver en mapa</button><button type="button" class="sec" id="ma">Registrar empresa con estas coordenadas</button></div>
+    <div class="err" id="me"></div>
+    <iframe id="mf" title="Google Maps" loading="lazy"></iframe>
+    <p class="note"><a id="ml" target="_blank" rel="noopener noreferrer">Abrir en Google Maps ↗</a></p>
+   </div>
+  </section>
+
+  <section id="v-users" class="hidden">
+   <div class="card"><h2>👥 Gestión de usuarios y roles</h2>
+    <form id="userform" novalidate>
+     <div class="row"><div><label for="nu">Usuario</label><input id="nu" name="newuser" autocomplete="off"></div><div><label for="np">Contraseña</label><input id="np" name="newpass" type="password" autocomplete="new-password"></div>
+     <div><label for="nr">Rol</label><select id="nr"></select></div></div>
+     <p class="note">Política: mínimo 8 caracteres, mayúscula, minúscula, número y símbolo.</p>
+     <button type="submit" id="bn">Crear usuario</button>
+    </form><div class="err" id="ne"></div>
+    <div class="tw mt"><table id="tbu"></table></div>
+   </div>
+   <div class="card"><h3>Matriz de permisos</h3><div class="tw"><table>
+    <tr><th>Rol</th><th>Nivel</th><th>Accesos</th></tr>
+    <tr><td>Administrador</td><td>4</td><td>Todo: usuarios, bitácora, mapa, análisis, panel</td></tr>
+    <tr><td>Analista de seguridad</td><td>3</td><td>Panel, análisis, correos, mapa, bitácora</td></tr>
+    <tr><td>Auditor</td><td>2</td><td>Panel, mapa, bitácora (solo lectura)</td></tr>
+    <tr><td>Empleado</td><td>1</td><td>Analizador de enlaces y correos</td></tr></table></div></div>
+  </section>
+
+  <section id="v-log" class="hidden">
+   <div class="card"><h2>📜 Bitácora de auditoría</h2><div class="row"><button type="button" class="sec" id="bc">Exportar CSV</button></div><div class="tw mt"><table id="tbl"></table></div></div>
+  </section>
+ </main>
+ <footer>SDEM Chacao · Proyecto de Ingeniería Informática · Evaluación final · Análisis heurístico local, sin envío de datos a terceros</footer>
+</div>
+
+<script src="js/app.js" defer></script>
+</body>
+</html>
