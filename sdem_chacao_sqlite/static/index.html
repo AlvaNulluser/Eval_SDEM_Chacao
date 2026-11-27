@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDEM Chacao | Detección de Enlaces Maliciosos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/vendor/tailwind.js"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css" />
+    <script src="/static/vendor/leaflet/leaflet.js"></script>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors">
 
@@ -74,6 +74,12 @@
                 </div>
             </section>
 
+            <!-- DISTRIBUCIÓN DE RESULTADOS -->
+            <section id="sec-chart" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-4">📊 Distribución de resultados</h2>
+                <div id="chart" class="space-y-3"></div>
+            </section>
+
             <!-- ANALIZADORES -->
             <div id="sec-analyzers" class="grid md:grid-cols-2 gap-6">
                 <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow space-y-4">
@@ -96,6 +102,20 @@
                     <div id="email-result" aria-live="polite" class="space-y-2 text-sm"></div>
                 </section>
             </div>
+
+            <!-- CRITERIOS HEURÍSTICOS -->
+            <section id="sec-criteria" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-2">🧪 Criterios heurísticos aplicados</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Protocolo no seguro · IP en lugar de dominio · símbolo @ · punycode · subdominios
+                    excesivos · TLD riesgoso · acortadores · palabras de phishing · suplantación de marcas
+                    (SENIAT, DHL, Maersk, bancos) · codificación hexadecimal · puertos atípicos · longitud
+                    anómala.
+                </p>
+                <p class="text-xs text-slate-400 mt-3">
+                    Escala de riesgo: 0–24 seguro · 25–54 sospechoso · 55–100 malicioso.
+                </p>
+            </section>
 
             <!-- ÚLTIMOS ANÁLISIS -->
             <section id="sec-recent" class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow">
@@ -128,6 +148,20 @@
                         <option value="Administrador">Administrador (Nivel 4)</option>
                     </select>
                     <button onclick="createUser()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Crear usuario</button>
+                </div>
+                <div class="overflow-x-auto pt-2">
+                    <h3 class="font-semibold mb-2">Matriz de permisos</h3>
+                    <table class="w-full text-left text-sm">
+                        <thead class="border-b dark:border-slate-700 text-slate-500">
+                            <tr><th class="py-2">Rol</th><th>Nivel</th><th>Accesos</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b dark:border-slate-700"><td class="py-1.5">Administrador</td><td>4</td><td>Todo: usuarios, bitácora, mapa, análisis, panel</td></tr>
+                            <tr class="border-b dark:border-slate-700"><td class="py-1.5">Analista de seguridad</td><td>3</td><td>Panel, análisis, correos, mapa, bitácora</td></tr>
+                            <tr class="border-b dark:border-slate-700"><td class="py-1.5">Auditor</td><td>2</td><td>Panel, mapa, bitácora (solo lectura)</td></tr>
+                            <tr><td class="py-1.5">Empleado</td><td>1</td><td>Analizador de enlaces y correos</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 

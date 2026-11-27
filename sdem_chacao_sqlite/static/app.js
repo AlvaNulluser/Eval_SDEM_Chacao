@@ -54,8 +54,10 @@ function initApp() {
 
     const lvl = currentUser.level;
     document.getElementById("sec-dashboard").classList.toggle("hidden", lvl < 2);
+    document.getElementById("sec-chart").classList.toggle("hidden", lvl < 2);
     document.getElementById("sec-recent").classList.toggle("hidden", lvl < 2);
     document.getElementById("sec-analyzers").classList.toggle("hidden", lvl === 2);
+    document.getElementById("sec-criteria").classList.toggle("hidden", lvl === 2);
     document.getElementById("sec-map").classList.toggle("hidden", lvl < 2);
     document.getElementById("form-company").classList.toggle("hidden", lvl < 3);
     document.getElementById("sec-users").classList.toggle("hidden", lvl < 4);
@@ -149,6 +151,22 @@ async function refreshDashboard() {
     document.getElementById("stat-seguros").textContent = data.metrics.seguros;
     document.getElementById("stat-sospechosos").textContent = data.metrics.sospechosos;
     document.getElementById("stat-maliciosos").textContent = data.metrics.maliciosos;
+
+    const distribution = [
+        ["Seguros", data.metrics.seguros, "bg-emerald-500"],
+        ["Sospechosos", data.metrics.sospechosos, "bg-amber-500"],
+        ["Maliciosos", data.metrics.maliciosos, "bg-red-500"]
+    ];
+    const max = Math.max(1, ...distribution.map(([, value]) => value));
+    document.getElementById("chart").innerHTML = distribution.map(([label, value, color]) =>
+        `<div class="flex items-center gap-3">
+            <span class="w-28 text-sm">${label}</span>
+            <div class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-4 overflow-hidden">
+                <div class="${color} h-4 rounded-full" style="width:${Math.max(4, (value / max) * 100)}%"></div>
+            </div>
+            <span class="w-8 text-right text-sm font-semibold">${value}</span>
+        </div>`
+    ).join("");
 
     if (data.recent.length) {
         document.getElementById("recent-list").innerHTML = data.recent.map(r =>

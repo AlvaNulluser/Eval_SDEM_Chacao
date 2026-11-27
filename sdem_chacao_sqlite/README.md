@@ -47,5 +47,6 @@ app/
 static/
   index.html         Interfaz
   app.js             Lógica del cliente
+  vendor/            Tailwind y Leaflet incluidos localmente (sin CDN)
 tests/               Suite de pytest
 ```
